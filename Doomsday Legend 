@@ -1,0 +1,191 @@
+import time
+import sys
+
+# Helper function for printing text with a delay
+def type_text(text, delay=0.05):
+    for char in text:
+        sys.stdout.write(char)
+        sys.stdout.flush()
+        time.sleep(delay)
+    print()
+
+# Player class for handling player's stats, skills, and XP
+class Player:
+    def __init__(self, name):
+        self.name = name
+        self.health = 100
+        self.skills = {
+            'Zombie': {'Undead Resilience': 1, 'Frenzied Bite': 1, 'Zombie Clones': 1},
+            'Combat': {'Sword Mastery': 1, 'Stealth Attack': 1},
+            'Survival': {'Resourcefulness': 1, 'Scavenger': 1}
+        }
+        self.xp = 0
+        self.zombie_army = []  # Army of summoned zombies
+
+    def gain_xp(self, xp_amount):
+        self.xp += xp_amount
+        print(f"{self.name} has gained {xp_amount} XP!")
+
+    def level_up_skill(self, category, skill_name):
+        if self.skills[category][skill_name] < 100:
+            self.skills[category][skill_name] += 1
+            print(f"{skill_name} is now Level {self.skills[category][skill_name]}")
+        elif self.skills[category][skill_name] == 100:
+            self.evolve_skill(category, skill_name)
+
+    def evolve_skill(self, category, skill_name):
+        if category == 'Zombie' and skill_name == 'Zombie Clones':
+            self.skills['Zombie']['Zombie Clones'] = 'Necrotic Horde'
+            print("> Your 'Zombie Clones' skill has evolved into 'Necrotic Horde'!")
+        elif category == 'Combat' and skill_name == 'Sword Mastery':
+            self.skills['Combat']['Sword Mastery'] = 'Blade Mastery'
+            print("> Your 'Sword Mastery' has evolved into 'Blade Mastery'!")
+        elif category == 'Survival' and skill_name == 'Resourcefulness':
+            self.skills['Survival']['Resourcefulness'] = 'Expert Scavenger'
+            print("> Your 'Resourcefulness' has evolved into 'Expert Scavenger'!")
+
+    def display_stats(self):
+        print(f"\n--- {self.name}'s Stats ---")
+        print(f"Health: {self.health}")
+        print(f"XP: {self.xp}")
+        print("Skills:")
+        for category, skills in self.skills.items():
+            print(f"  {category} Skills:")
+            for skill, level in skills.items():
+                print(f"    {skill}: {level}")
+        print("------------------------\n")
+
+# Welcome the player, and explain the game mechanics
+def welcome_player():
+    type_text(""" 
+    In the beginning, the world was whole—a perfect balance of light and shadow. 
+    But that balance was shattered when the Seven Seals of Reality were broken.
+
+    Demons, witches, angels, and forgotten gods emerged from the void. 
+    Their eternal conflict has turned the world into a wasteland. 
+    Now, survival is a game of power, and power comes at a cost.
+
+    You, a wanderer, have no memories of your past. 
+    All you know is this: this one... 
+    You must rise through the ranks—from a fragile mortal to a legend feared by gods. 
+    Your choices will shape the fate of this broken world.
+
+    Welcome to Doomsday Legends.
+
+    Before we begin, a word of caution:
+    Not all battles can be won.
+    Not all allies can be trusted.
+    And not all paths lead to salvation.
+
+    Do you have what it takes to survive?
+    Or will you be just another soul lost in the apocalypse?
+    The choice is yours...
+    """)
+    
+    name = input("> What is your name, brave adventurer? ")
+    player = Player(name)  # Create player object
+    type_text(f"> Welcome, Player {name}!")
+    type_text("> You are ready to embark on an incredible journey.\n")
+    
+    player_is_ready_to_play = input("Are you ready to embark on this journey? Type 'START' to begin or 'EXIT' to leave: ")
+    
+    if player_is_ready_to_play.upper() == "START":
+        type_text("> LOADING...")
+        start_game(player)
+    elif player_is_ready_to_play.upper() == "EXIT":
+        type_text(f"> Goodbye, {name}!")
+        exit()
+
+# Game starts here
+def start_game(player):
+    # Game start
+    type_text("> You find yourself in the ruined city, filled with the decayed remnants of a forgotten world...\n")
+    type_text("> The zombies are here, and they are getting stronger...\n")
+    type_text("> Your first challenge: face the Tier 1 Zombie.\n")
+    
+    # After monologue, the player is handed control
+    player_control(player)
+
+# Zombie encounter function with XP rewards
+def zombie_encounter(zombie_tier, player):
+    type_text(f"> A Tier {zombie_tier} Zombie approaches...\n")
+    xp_gained = zombie_tier * 10  # Example XP formula based on zombie tier
+    player.gain_xp(xp_gained)
+    
+    # Level up skills based on XP gained
+    player.level_up_skill('Zombie', 'Zombie Clones')
+
+    # Summon zombie to join the player's army
+    zombie = f"Tier {zombie_tier} Zombie"
+    player.zombie_army.append(zombie)
+    type_text(f"> You have defeated the Zombie! {player.name} gains strength...\n")
+    type_text(f"> {zombie} has risen and now fights for you!\n")
+
+    # Display updated stats
+    player.display_stats()
+    type_text("You have to defeat more opponents to level up!!!\n")
+
+# Function to give the player control over movement and exploration
+def player_control(player):
+    while True:
+        type_text("> You are standing at the entrance of a ruined city...\n")
+        type_text("> Options: ")
+        type_text("1. Head north towards the dark alley.")
+        type_text("2. Move west into the abandoned warehouse.")
+        type_text("3. Search for supplies in the nearby shop.")
+        type_text("4. Exit the city.")
+        
+        choice = input("> What do you want to do? ")
+
+        if choice == '1':
+            type_text("> You venture into the dark alley...\n")
+            zombie_encounter(1, player)
+            enter_the_dark_alley(player)
+        elif choice == '2':
+            type_text("> You enter the abandoned warehouse...\n")
+            # Additional encounter logic here
+        elif choice == '3':
+            type_text("> You search the shop...\n")
+            # Additional exploration logic here
+        elif choice == '4':
+            type_text("> You decide to leave the city...\n")
+            break
+        else:
+            type_text("> Invalid choice. Please try again.")
+
+def enter_the_dark_alley(player):
+    type_text("> The dark alley twists and turns, leading you deeper into the shadows...\n")
+    type_text("> Sub-options: ")
+    type_text("1. Explore the abandoned prison, rumored to be crawling with zombies.")
+    type_text("2. Head into the nearby forest to gather resources and build a shelter.")
+    type_text("3. Search the alley for hidden treasures or clues.")
+    
+    sub_choice = input("> What will you do next? ")
+
+    if sub_choice == '1':
+        type_text("> You approach the eerie prison gates. The sound of groaning echoes from within...\n")
+        prison_experience(player)  # Function for prison exploration
+        
+    '''elif sub_choice == '2':
+        type_text("> You make your way into the dense forest. The air is thick with the scent of pine and danger...\n")
+        forest_shelter(player)  # Function for building a shelter
+    elif sub_choice == '3':
+        type_text("> You carefully search the alley, keeping an eye out for any hidden threats...\n")
+        alley_treasure(player)  # Function for finding treasures or clues'''
+
+def prison_experience(player):
+    type_text("> You cautiously step into the prison. The air is thick with the stench of decay...\n")
+    type_text("> You soon realize you're surrounded by hordes of zombies.\n")
+    type_text("> The prison is home to nearly 3000 zombies, most of them Tier 1 and Tier 2.\n")
+    type_text("> Among them, you spot a handful of more dangerous Tier 3 zombies.\n")
+    
+    # Player summons zombie clone
+    type_text("> Recognizing the overwhelming numbers, you summon your zombie clone...\n")
+    type_text("> With each kill a new soldier is added to your army \n")
+    type_text("> The tier 1 zombies were relatively easy to take down but as the tiers increase you'll need more numbers to compensate for strength\n")
+    type_text("> Checking your stats...")
+    
+    type_text("This lasts for about three days and standing ")
+
+welcome_player()
+    # The player fights through the zombies, with each kill rising up to
