@@ -1,0 +1,75 @@
+# Newton-Raphson method to solve f(x) = 4x + sin(x) - e^x = 0
+# Initial guess x0 = 0
+# Stop if error < 1e-5 or after 100 iterations
+# No external libraries used
+
+
+# Function to approximate exponential using Taylor series
+def exp_approx(x, terms=20):
+    result = 1
+    term = 1
+    for i in range(1, terms):
+        term *= x / i
+        result += term
+    return result
+
+# Function to approximate sin(x) using Taylor series
+def sin_approx(x, terms=20):
+    result = 0
+    term = x
+    sign = 1
+    for i in range(1, 2*terms, 2):
+        result += sign * term
+        term *= x * x / ((i+1)*(i+2))
+        sign *= -1
+    return result
+
+# Function to approximate cos(x) using Taylor series
+def cos_approx(x, terms=20):
+    result = 1
+    term = 1
+    sign = -1
+    for i in range(2, 2*terms, 2):
+        term *= x * x / (i * (i - 1))
+        result += sign * term
+        sign *= -1
+    return result
+
+
+# Function f(x)
+def f(x):
+    return 4 * x + sin_approx(x) - exp_approx(x)
+
+# Derivative f'(x)
+def df(x):
+    return 4 + cos_approx(x) - exp_approx(x)
+
+# Newton-Raphson algorithm
+def newton_raphson(x0, tol=1e-5, max_iter=100):
+    print("iter.\txk\t\t\tf(xk)\t\t\terror")
+
+    xk = x0  # Start with initial guess
+    for k in range(1, max_iter + 1):
+        fxk = f(xk)
+        dfxk = df(xk)
+
+        if abs(dfxk) < 1e-10:
+            print("Derivative too small. Cannot continue.")
+            return None
+
+        x_next = xk - fxk / dfxk  # Newton's formula
+        error = abs(x_next - xk) / abs(x_next)
+
+        print(f"{k}\t{x_next:.10f}\t{fxk:.10f}\t{error:.8f}")
+
+        if error < tol:
+            print("\n Root found successfully.")
+            return x_next
+
+        xk = x_next
+
+    print("\n Method did not converge within limit.")
+    return xk
+
+# Call the function with x0 = 0
+root = newton_raphson(0)
