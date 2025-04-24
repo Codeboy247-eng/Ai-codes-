@@ -1,0 +1,64 @@
+# Function: f(x) = x² - 2
+def f(x):
+    return x * x - 2
+
+# Derivative: f'(x) = 2x
+def df(x):
+    return 2 * x
+
+# Bisection method
+def bisection_method(a, b, tol=1e-6, max_steps=100):
+    steps = 0
+    if f(a) * f(b) > 0:
+        print("No root in this interval.")
+        return None, steps
+
+    while (b - a) / 2 > tol and steps < max_steps:
+        steps += 1
+        midpoint = (a + b) / 2
+        if f(midpoint) == 0:
+            return midpoint, steps
+        elif f(a) * f(midpoint) < 0:
+            b = midpoint
+        else:
+            a = midpoint
+
+    return (a + b) / 2, steps
+
+# Newton-Raphson method
+def newton_method(x0, tol=1e-6, max_steps=100):
+    steps = 0
+    x = x0
+
+    while steps < max_steps:
+        steps += 1
+        fx = f(x)
+        dfx = df(x)
+
+        if dfx == 0:
+            print("Derivative too small.")
+            return None, steps
+
+        x_next = x - fx / dfx
+
+        if abs(x_next - x) < tol:
+            return x_next, steps
+
+        x = x_next
+
+    return x, steps
+
+# Comparison function
+def compare_methods():
+    print("Comparing methods on f(x) = x² - 2")
+
+    # Run bisection
+    root_bisect, steps_bisect = bisection_method(1, 2)
+    print(f"Bisection: Root ≈ {root_bisect:.6f}, Steps = {steps_bisect}")
+
+    # Run Newton-Raphson
+    root_newton, steps_newton = newton_method(1)
+    print(f"Newton-Raphson: Root ≈ {root_newton:.6f}, Steps = {steps_newton}")
+
+# Run the comparison
+compare_methods()
