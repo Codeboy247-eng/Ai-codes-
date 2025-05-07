@@ -1,0 +1,60 @@
+# Define the Robot class
+class Robot:
+    # The constructor initializes name, battery, position, and task list
+    def __init__(self, name):
+        self.name = name
+        self.battery = 100  # Full battery at start
+        self.position = [0, 0]  # Starting at origin (x, y)
+        self.tasks = []  # Empty list of tasks
+
+    # Method to move the robot in a direction for a number of steps
+    def move(self, direction, steps):
+        if self.battery <= 0:
+            print(f"{self.name} has no battery left. Please recharge.")
+            return
+        
+        # Update position based on direction
+        if direction == "up":
+            self.position[1] += steps
+        elif direction == "down":
+            self.position[1] -= steps
+        elif direction == "right":
+            self.position[0] += steps
+        elif direction == "left":
+            self.position[0] -= steps
+        else:
+            print("Unknown direction")
+            return
+        
+        # Reduce battery level based on steps taken
+        self.battery -= steps * 1
+        print(f"{self.name} moved {steps} steps {direction}. Battery: {self.battery}%. Position: {self.position}")
+
+    # Make the robot speak a message
+    def speak(self, message):
+        print(f"{self.name} says: '{message}'")
+
+    # Add a new task to the robot's task list
+    def add_task(self, task):
+        self.tasks.append(task)
+        print(f"{self.name} added task: {task}")
+
+    # Display all current tasks
+    def show_tasks(self):
+        print(f"{self.name}'s Task List:")
+        for i, task in enumerate(self.tasks, start=1):
+            print(f"{i}. {task}")
+
+    # Recharge the battery to 100%
+    def recharge(self):
+        self.battery = 100
+        print(f"{self.name} is now fully recharged.")
+
+    # Display current status of the robot
+    def status(self):
+        print(f"Robot: {self.name}")
+        print(f"Battery: {self.battery}%")
+        print(f"Position: {self.position}")
+        print(f"Tasks: {len(self.tasks)}")
+
+#Damilola Bamidele
